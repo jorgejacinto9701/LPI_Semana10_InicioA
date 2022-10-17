@@ -30,9 +30,9 @@ import java.util.List;
 import java.awt.event.MouseEvent;
 import javax.swing.JCheckBox;
 
-@SuppressWarnings("serial")
 public class FrmCrudCampeonato extends JFrame implements ActionListener, MouseListener{
 
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtNombre;
 	private JTextField txtAnno;
