@@ -6,23 +6,37 @@ import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import entidad.Campeonato;
+import model.CampeonatoModel;
+import util.Validaciones;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
+import java.awt.event.MouseEvent;
+import javax.swing.JCheckBox;
 
 @SuppressWarnings("serial")
-public class FrmCrudCampeonato extends JFrame {
+public class FrmCrudCampeonato extends JFrame implements ActionListener, MouseListener{
 
 	private JPanel contentPane;
 	private JTextField txtNombre;
 	private JTextField txtAnno;
+	private JTable table;
 	private JButton btnRegistrar;
 	private JButton btnEliminar;
 	private JButton btnActualizar;
@@ -97,27 +111,45 @@ public class FrmCrudCampeonato extends JFrame {
 		txtAnno.setColumns(10);
 
 		btnRegistrar = new JButton("Registrar");
+		btnRegistrar.addActionListener(this);
 		btnRegistrar.setIcon(new ImageIcon(FrmCrudCampeonato.class.getResource("/iconos/add.gif")));
 		btnRegistrar.setBounds(57, 216, 114, 33);
 		contentPane.add(btnRegistrar);
 
 		btnActualizar = new JButton("Actualizar");
+		btnActualizar.addActionListener(this);
 		btnActualizar.setIcon(new ImageIcon(FrmCrudCampeonato.class.getResource("/iconos/edit.gif")));
 		btnActualizar.setBounds(357, 216, 114, 33);
 		contentPane.add(btnActualizar);
 
 		btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(this);
 		btnEliminar.setIcon(new ImageIcon(FrmCrudCampeonato.class.getResource("/iconos/delete.gif")));
 		btnEliminar.setBounds(205, 216, 114, 33);
 		contentPane.add(btnEliminar);
 
-	
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 260, 508, 184);
+		contentPane.add(scrollPane);
+
+		table = new JTable();
+		table.addMouseListener(this);
+		table.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Id", "Nombre", "A\u00F1o", "Estado"
+			}
+		));
+		scrollPane.setViewportView(table);
+		
 		chkEstado = new JCheckBox("Activo");
 		chkEstado.setSelected(true);
 		chkEstado.setBounds(185, 175, 84, 23);
 		contentPane.add(chkEstado);
 
-
+		// Traer todos los campeonatos de la BD
+		lista();
 	}
 
 
@@ -133,9 +165,159 @@ public class FrmCrudCampeonato extends JFrame {
 	}
 
 	
-
-
-
+	
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnActualizar) {
+			handle_btnActualizar_actionPerformed(e);
+		}
+		if (e.getSource() == btnEliminar) {
+			handle_btnEliminar_actionPerformed(e);
+		}
+		if (e.getSource() == btnRegistrar) {
+			handle_btnRegistrar_actionPerformed(e);
+		}
+	}
+	protected void handle_btnRegistrar_actionPerformed(ActionEvent e) {
+		inserta();
+	}
+	protected void handle_btnEliminar_actionPerformed(ActionEvent e) {
+		elimina();
+	}
+	protected void handle_btnActualizar_actionPerformed(ActionEvent e) {
+		actualiza();
+	}
+	public void mouseClicked(MouseEvent e) {
+		if (e.getSource() == table) {
+			handle_table_mouseClicked(e);
+		}
+	}
+	public void mouseEntered(MouseEvent e) {
+	}
+	public void mouseExited(MouseEvent e) {
+	}
+	public void mousePressed(MouseEvent e) {
+	}
+	public void mouseReleased(MouseEvent e) {
+	}
+	protected void handle_table_mouseClicked(MouseEvent e) {
+		busca();
+	}
+	
+	private void lista() {
+		CampeonatoModel model = new CampeonatoModel();
+		List<Campeonato> lista = model.listaTodos();
+		
+		DefaultTableModel dtm = (DefaultTableModel) table.getModel();
+		dtm.setRowCount(0);
+		
+		Object[] fila = null; 
+		for (Campeonato x : lista) {
+			fila = new Object[]{ x.getIdCampeonato(), x.getNombre(), x.getAnnio(), getFormatEstado(x.getEstado())};
+			dtm.addRow(fila);
+		}
+	}
+	private void inserta() {
+		String nom = txtNombre.getText().trim();
+		String anio = txtAnno.getText().trim();
+		
+		if (!nom.matches(Validaciones.TEXTO)) {
+			mensaje("El nombre es de 3 a 20 caracteres");
+		}else if (!anio.matches(Validaciones.ANHO)) {
+			mensaje("El año es de 4 dígitos");
+		}else {
+			Campeonato obj = new Campeonato();
+			obj.setNombre(nom);
+			obj.setAnnio(Integer.parseInt(anio));
+			
+			CampeonatoModel model = new CampeonatoModel();
+			int salida = model.insertaCampeonato(obj);
+			
+			if (salida > 0) {
+				idSeleccionado = -1;
+				lista();
+				limpiarCajasTexto();
+				mensaje("Se insertó correctamente");
+			}else {
+				mensaje("Error en el Registro");
+			}
+		}
+	}
+	private void busca() {
+		int fila = table.getSelectedRow();
+		
+		idSeleccionado = (Integer)table.getValueAt(fila, 0);
+		String nombre =  (String)table.getValueAt(fila, 1);
+		int anio =  (Integer)table.getValueAt(fila, 2);
+		String estado =  (String)table.getValueAt(fila, 3);
+		
+		System.out.println(idSeleccionado + " - " +  nombre + " - " + anio + " - " + estado);
+		
+		txtNombre.setText(nombre);
+		txtAnno.setText(String.valueOf(anio));
+		chkEstado.setSelected(getBooleanEstado(estado));
+	}
+	
+	private void actualiza() {
+		String nom = txtNombre.getText().trim();
+		String anio = txtAnno.getText().trim();
+		boolean estado = chkEstado.isSelected();
+		
+		if (idSeleccionado == -1) {
+			mensaje("Seleccione una fila");
+		}else if (!nom.matches(Validaciones.TEXTO)) {
+			mensaje("El nombre es de 3 a 20 caracteres");
+		}else if (!anio.matches(Validaciones.ANHO)) {
+			mensaje("El año es de 4 dígitos");
+		}else {
+			Campeonato obj = new Campeonato();
+			obj.setIdCampeonato(idSeleccionado);
+			obj.setNombre(nom);
+			obj.setAnnio(Integer.parseInt(anio));
+			obj.setEstado(getIntegerEstado(estado));
+			
+			CampeonatoModel model = new CampeonatoModel();
+			int salida = model.actualizaCampeonato(obj);
+			
+			if (salida > 0) {
+				idSeleccionado = -1;
+				lista();
+				limpiarCajasTexto();
+				mensaje("Se actualizó correctamente");
+			}else {
+				mensaje("Error en la Actualización");
+			}
+		}
+		
+	}
+	
+	private void elimina() {
+		if (idSeleccionado == -1) {
+			mensaje("Seleccione una fila");
+		}else {
+			CampeonatoModel model = new CampeonatoModel();
+			int salida = model.eliminaCampeonato(idSeleccionado);
+			if (salida > 0) {
+				lista();
+				idSeleccionado = -1;
+				limpiarCajasTexto();
+				mensaje("Se eliminó correctamente");
+			}else {
+				mensaje("Error en la eliminación");
+			}
+		}
+	}
+	
+	private String getFormatEstado(int estado) {
+		return estado == 1 ? "Activo" : "Inactivo";
+	}
+	
+	private boolean getBooleanEstado(String estado) {
+		return estado == "Activo" ? true : false;
+	}
+	
+	private int getIntegerEstado(boolean estado) {
+		return estado ? 1 : 0;
+	}
 }
 
 
