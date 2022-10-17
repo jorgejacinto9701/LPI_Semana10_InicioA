@@ -3,12 +3,10 @@ package gui.crud.simple;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.sql.Date;
 import java.util.List;
 
@@ -191,22 +189,7 @@ public class FrmCrudJugador extends JFrame implements ActionListener, MouseListe
 	    //No se pueda editar
 	    table.setDefaultEditor(Object.class, null);
 	    
-		//Efecto Rollover
-	    table.addMouseMotionListener(new MouseMotionListener() {
-	        @Override
-	        public void mouseMoved(MouseEvent e) {
-	            Point p = e.getPoint();
-	            hoveredRow = table.rowAtPoint(p);
-	            hoveredColumn = table.columnAtPoint(p);
-	            table.setRowSelectionInterval(hoveredRow, hoveredRow);
-	            table.repaint();    
-	        }
-	        @Override
-	        public void mouseDragged(MouseEvent e) {
-	            hoveredRow = hoveredColumn = -1;
-	            table.repaint();
-	        }
-	    });
+		
 	    
 		lista();
 	}
