@@ -1,10 +1,11 @@
-package gui.crud;
+package gui.crud.simple;
 
 import java.awt.EventQueue;
 import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -28,8 +29,12 @@ public class FrmCrudJugador extends JFrame {
 	private JButton btnIngresar;
 	private JButton btnActualizar;
 	private JButton btnEliminar;
-	
+	private JCheckBox chkEstado;
+	// -1 indica que no se ha selecionado nada en la grilla o Jtable
+	int idSeleccionado = -1;
 
+	int hoveredRow = -1, hoveredColumn = -1;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -111,12 +116,15 @@ public class FrmCrudJugador extends JFrame {
 		btnEliminar.setIcon(new ImageIcon(FrmCrudJugador.class.getResource("/iconos/delete.gif")));
 		btnEliminar.setBounds(495, 127, 130, 30);
 		contentPane.add(btnEliminar);
+		
+		chkEstado = new JCheckBox("Activo");
+		chkEstado.setSelected(true);
+		chkEstado.setBounds(259, 209, 97, 30);
+		contentPane.add(chkEstado);
+		
+
 
 	}
-
-	
-	
-
 	
 	void mensaje(String m) {
 		JOptionPane.showMessageDialog(this, m);
@@ -130,6 +138,7 @@ public class FrmCrudJugador extends JFrame {
 	}
 	
 	
+
 }
 
 

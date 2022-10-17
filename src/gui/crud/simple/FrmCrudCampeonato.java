@@ -1,4 +1,4 @@
-package gui.crud;
+package gui.crud.simple;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -6,6 +6,7 @@ import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,7 +18,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("serial")
-public class FrmCrudCampeonato extends JFrame{
+public class FrmCrudCampeonato extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField txtNombre;
@@ -25,8 +26,10 @@ public class FrmCrudCampeonato extends JFrame{
 	private JButton btnRegistrar;
 	private JButton btnEliminar;
 	private JButton btnActualizar;
-
-	// Es el id de la fila seleccionado
+	private JCheckBox chkEstado;
+	
+	// Es el id de la fila seleccionado 
+	// -1 ==> NO se selecciono NADA
 	int idSeleccionado = -1;
 
 	// ModelCampeonato-->Es la clase donde estan los
@@ -60,7 +63,7 @@ public class FrmCrudCampeonato extends JFrame{
 	 */
 	public FrmCrudCampeonato() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 652, 466);
+		setBounds(100, 100, 544, 494);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -72,7 +75,7 @@ public class FrmCrudCampeonato extends JFrame{
 		lblMantenimientoCampeonato.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMantenimientoCampeonato.setForeground(Color.WHITE);
 		lblMantenimientoCampeonato.setFont(new Font("Tahoma", Font.BOLD, 19));
-		lblMantenimientoCampeonato.setBounds(10, 11, 616, 59);
+		lblMantenimientoCampeonato.setBounds(10, 11, 508, 59);
 		contentPane.add(lblMantenimientoCampeonato);
 
 		JLabel lblNombre = new JLabel("Nombre");
@@ -80,7 +83,7 @@ public class FrmCrudCampeonato extends JFrame{
 		contentPane.add(lblNombre);
 
 		JLabel lblAnno = new JLabel("A\u00F1o");
-		lblAnno.setBounds(105, 142, 46, 26);
+		lblAnno.setBounds(104, 132, 46, 26);
 		contentPane.add(lblAnno);
 
 		txtNombre = new JTextField();
@@ -89,26 +92,32 @@ public class FrmCrudCampeonato extends JFrame{
 		txtNombre.setColumns(10);
 
 		txtAnno = new JTextField();
-		txtAnno.setBounds(184, 145, 86, 20);
+		txtAnno.setBounds(183, 135, 86, 20);
 		contentPane.add(txtAnno);
 		txtAnno.setColumns(10);
 
 		btnRegistrar = new JButton("Registrar");
 		btnRegistrar.setIcon(new ImageIcon(FrmCrudCampeonato.class.getResource("/iconos/add.gif")));
-		btnRegistrar.setBounds(463, 91, 114, 30);
+		btnRegistrar.setBounds(57, 216, 114, 33);
 		contentPane.add(btnRegistrar);
 
 		btnActualizar = new JButton("Actualizar");
 		btnActualizar.setIcon(new ImageIcon(FrmCrudCampeonato.class.getResource("/iconos/edit.gif")));
-		btnActualizar.setBounds(463, 176, 114, 30);
+		btnActualizar.setBounds(357, 216, 114, 33);
 		contentPane.add(btnActualizar);
 
 		btnEliminar = new JButton("Eliminar");
 		btnEliminar.setIcon(new ImageIcon(FrmCrudCampeonato.class.getResource("/iconos/delete.gif")));
-		btnEliminar.setBounds(463, 132, 114, 30);
+		btnEliminar.setBounds(205, 216, 114, 33);
 		contentPane.add(btnEliminar);
 
-		// Traer todos los campeonatos de la BD
+	
+		chkEstado = new JCheckBox("Activo");
+		chkEstado.setSelected(true);
+		chkEstado.setBounds(185, 175, 84, 23);
+		contentPane.add(chkEstado);
+
+
 	}
 
 
@@ -124,7 +133,10 @@ public class FrmCrudCampeonato extends JFrame{
 	}
 
 	
-	
+
+
+
 }
+
 
 
