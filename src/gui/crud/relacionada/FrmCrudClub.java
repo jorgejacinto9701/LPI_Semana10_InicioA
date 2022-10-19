@@ -2,6 +2,7 @@ package gui.crud.relacionada;
 
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -18,13 +19,21 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
 import util.JComboBoxBD;
+import util.Validaciones;
+
 import java.awt.Color;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import entidad.Club;
+import entidad.Pais;
+import model.ClubModel;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
+import java.sql.Date;
 import java.awt.event.MouseEvent;
 
 public class FrmCrudClub extends JFrame implements ActionListener, MouseListener {
@@ -151,15 +160,14 @@ public class FrmCrudClub extends JFrame implements ActionListener, MouseListener
 			new Object[][] {
 			},
 			new String[] {
-				"ID", "Nombre", "Fecha Creaci\u00F3n", "Estado", "Pa\u00EDs"
+				"ID", "Nombre", "Fecha Creaci\u00F3n", "Estado", "Id Pa\u00EDs", "Pa\u00EDs"
 			}
 		));
 		table.getColumnModel().getColumn(1).setPreferredWidth(164);
 		table.getColumnModel().getColumn(2).setPreferredWidth(133);
 		scrollPane.setViewportView(table);
 		
-
-
+		lista();
 	}
 	
 	void mensaje(String m) {
@@ -183,10 +191,13 @@ public class FrmCrudClub extends JFrame implements ActionListener, MouseListener
 		}
 	}
 	protected void actionPerformedBtnIngresarJButton(ActionEvent e) {
+		registra();
 	}
 	protected void actionPerformedBtnEliminarJButton(ActionEvent e) {
+		elimina();
 	}
 	protected void actionPerformedBtnActualizarJButton(ActionEvent e) {
+		actualiza();
 	}
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == table) {
@@ -202,8 +213,75 @@ public class FrmCrudClub extends JFrame implements ActionListener, MouseListener
 	public void mouseReleased(MouseEvent e) {
 	}
 	protected void mouseClickedTableJTable(MouseEvent e) {
+		busca();
 	}
+	
+	public void lista() {
+		DefaultTableModel dt = (DefaultTableModel) table.getModel();
+		dt.setRowCount(0);
+		
+		ClubModel model = new ClubModel();
+		List<Club> lista = model.listaTodos();
+		
+		for (Club x : lista) {
+			Object[] f = {x.getIdClub(), x.getNombre(), x.getFechaCreacion(), 
+						  getDesEstado(x.getEstado()) , x.getPais().getIdPais(), x.getPais().getNombre()};
+			dt.addRow(f);
+		}
+	}
+	
+	public String getDesEstado(int x) {
+		if (x == 0) return "Inactivo";
+		else		return "Activo";
+	}
+	
+	public void registra() {
+		String nom = txtNombre.getText().trim();
+		String fec = txtFecha.getText().trim();
+		int posPais = cboPais.getSelectedIndex();
+		boolean est = chkEstado.isSelected();
+		
+		if (!nom.matches(Validaciones.TEXTO)) {
+			mensaje("El nombre es de 2 a 20 caracteres");
+		}else if (!fec.matches(Validaciones.FECHA)) {
+			mensaje("la fecha tiene formato YYYY-MM-dd");
+		}else if (posPais == 0) {
+			mensaje("Selecciona un País");
+		}else {
+			String pais = cboPais.getSelectedItem().toString();
+			String idPais = pais.split(":")[0];
+			
+			Pais objPais = new Pais();
+			objPais.setIdPais(Integer.parseInt(idPais));
+			
+			Club objClub = new Club();
+			objClub.setNombre(nom);
+			objClub.setFechaCreacion(Date.valueOf(fec));
+			objClub.setPais(objPais);
+			if (est) 
+				objClub.setEstado(1);
+			else 	 
+				objClub.setEstado(0);
+			
+			ClubModel model = new ClubModel();
+			int salida = model.insertaClub(objClub);
+			if (salida > 0) {
+				lista();
+				mensaje("Se insertó correctamente");
+			}else {
+				mensaje("Error en el Registro");
+			}
+			
+		}
+		
+	}
+	public void busca() {}
+	public void actualiza() {}
+	public void elimina() {}
+	
 }
+
+
 
 
 
