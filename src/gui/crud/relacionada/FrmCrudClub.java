@@ -51,7 +51,6 @@ public class FrmCrudClub extends JFrame implements ActionListener, MouseListener
 	// -1 indica que no se ha selecionado nada en la grilla o Jtable
 	int idSeleccionado = -1;
 
-	int hoveredRow = -1, hoveredColumn = -1;
 	private JComboBoxBD cboPais;
 	private ResourceBundle rb = ResourceBundle.getBundle("combo");
 	private JLabel lblMantenimientoClub;
