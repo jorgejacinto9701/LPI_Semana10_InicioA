@@ -24,8 +24,11 @@ public class ClubModel {
 			conn = MySqlDBConexion.getConexion();
 			
 			//2 Se prepara el SQL
-			String sql = "insert into club value(null,?,?,curtime(),?,?)";
-			pstm = conn.prepareStatement(sql);
+			//String sql = "insert into club value(null,?,?,curtime(),?,?)";
+			//pstm = conn.prepareStatement(sql);
+			String sql = "call sp_club_inserta(?,?,?,?)";
+			pstm = conn.prepareCall(sql);
+			
 			pstm.setString(1, obj.getNombre());
 			pstm.setDate(2, obj.getFechaCreacion());
 			pstm.setInt(3, obj.getEstado());
@@ -55,8 +58,10 @@ public class ClubModel {
 			conn = MySqlDBConexion.getConexion();
 			
 			//2 Se prepara el SQL
-			String sql = "delete from club where idclub = ?";
-			pstm = conn.prepareStatement(sql);
+			//String sql = "delete from club where idclub = ?";
+			//pstm = conn.prepareStatement(sql);
+			String sql = "call sp_club_elimina(?)";
+			pstm = conn.prepareCall(sql);
 			pstm.setInt(1, idClub);
 			log.info(">>> " + pstm);
 			
@@ -83,8 +88,10 @@ public class ClubModel {
 			conn = MySqlDBConexion.getConexion();
 			
 			//2 Se prepara el SQL
-			String sql = "update club set nombre=?, fechaCreacion=?, estado=?, idPais=? where idclub = ?";
-			pstm = conn.prepareStatement(sql);
+			//String sql = "update club set nombre=?, fechaCreacion=?, estado=?, idPais=? where idclub = ?";
+			//pstm = conn.prepareStatement(sql);
+			String sql = "call sp_club_actualiza(?,?,?,?,?)";
+			pstm = conn.prepareCall(sql);
 			pstm.setString(1, obj.getNombre());
 			pstm.setDate(2, obj.getFechaCreacion());
 			pstm.setInt(3, obj.getEstado());
@@ -118,7 +125,10 @@ public class ClubModel {
 			conn = MySqlDBConexion.getConexion();
 			
 			//2 Se prepara el SQL
-			String sql = "SELECT c.*, p.nombre FROM club c inner join pais p on c.idPais = p.idPais";
+			//String sql = "SELECT c.*, p.nombre FROM club c inner join pais p on c.idPais = p.idPais";
+			//psmt = conn.prepareStatement(sql);
+			
+			String sql = "call sp_club_list()";
 			psmt = conn.prepareStatement(sql);
 			
 			log.info(">>> " + psmt);
